@@ -111,7 +111,7 @@ type UserId struct {
 	Id string `json:"id"`
 }
 
-// Instagram response for a user's feed request
+// Instagram user's feed
 type UserFeed struct {
 	Posts []Post `json:"Data"`
 }

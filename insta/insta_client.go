@@ -14,39 +14,9 @@ const (
 	userSearchUrl = "https://api.instagram.com/v1/users/search?q=%s&count=1&access_token=%s"
 )
 
-type SearchResult struct {
-	Users []UserId `json:"data"`
-}
-
-// A single user's ID
-type UserId struct {
-	Id string `json:"id"`
-}
-
-// Instagram response for a user's feed request
-type UserFeedResult struct {
-	Posts []Post `json:"Data"`
-}
-
-// User post including image, likes, comments etc.
-type Post struct {
-	Images FeedImage `json:"images"`
-	Id     string    `json:"id"`
-}
-
-// A single image with multiple resolutions
-type FeedImage struct {
-	StandardResolution ImageUrl `json:"standard_resolution"`
-}
-
-// A single image url
-type ImageUrl struct {
-	Url string `json:"url"`
-}
-
 // Instagram API client, it normally it requires an access
 // token, but some parts of the API can be accessed by just
-// using the client ID, please check the Instagram API doc
+// using the client ID
 type InstaClient struct {
 	ClientId    string
 	AccessToken string
@@ -130,3 +100,35 @@ func (i *InstaClient) getPostsFromUrl(url string) ([]Post, error) {
 	}
 	return result.Posts, nil
 }
+
+type SearchResult struct {
+	Users []UserId `json:"data"`
+}
+
+// A single user's ID
+type UserId struct {
+	Id string `json:"id"`
+}
+
+// Instagram response for a user's feed request
+type UserFeedResult struct {
+	Posts []Post `json:"Data"`
+}
+
+// User post including image, likes, comments etc.
+type Post struct {
+	Images FeedImage `json:"images"`
+	Id     string    `json:"id"`
+}
+
+// A single image with multiple resolutions
+type FeedImage struct {
+	StandardResolution ImageUrl `json:"standard_resolution"`
+}
+
+// A single image url
+type ImageUrl struct {
+	Url string `json:"url"`
+}
+
+

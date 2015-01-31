@@ -5,6 +5,7 @@ import (
 	"fmt"
 )
 
+// Search for user based on query string
 func (i *InstaClient) SearchUser(queryString string, options map[string]string) (*SearchResult, error) {
 	options["q"] = queryString
 

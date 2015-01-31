@@ -60,7 +60,7 @@ func (i *InstaClient) getPosts(username string, options map[string]string) ([]Po
 	}
 	// Create generic URL to get user's posts
 	url := fmt.Sprintf(userFeedUrl, userId, i.AccessToken)
-	
+
 	// Parse options
 	if maxId, contains := options["maxId"]; contains {
 		url += "&max_id=" + string(maxId)
@@ -124,8 +124,8 @@ type Post struct {
 
 // A single image with multiple resolutions
 type FeedImage struct {
-	Thumbnail ImageUrl `json:"thumbnail"`
-	LowResolution ImageUrl `json:"low_resolution"`
+	Thumbnail          ImageUrl `json:"thumbnail"`
+	LowResolution      ImageUrl `json:"low_resolution"`
 	StandardResolution ImageUrl `json:"standard_resolution"`
 }
 
@@ -133,5 +133,3 @@ type FeedImage struct {
 type ImageUrl struct {
 	Url string `json:"url"`
 }
-
-

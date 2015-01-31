@@ -10,7 +10,7 @@ func (i *InstaClient) SearchUser(queryString string, options map[string]string) 
 	if _, ok := options["count"]; !ok {
 		options["count"] = "10"
 	}
-	
+
 	var searchResult SearchResult
 	err := i.get("/users/search", options, &searchResult)
 	if err != nil {
@@ -26,7 +26,7 @@ func (i *InstaClient) GetUserId(username string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	
+
 	// If no user was found, return
 	if len(searchResult.Users) == 0 {
 		return "", errors.New("No user found with username " + username)
@@ -62,16 +62,13 @@ func (i *InstaClient) GetPostsWithMaxId(userId string, maxId string) (*UserFeed,
 	})
 }
 
-// Get User's liked posts
+// Get currently logged in user's liked posts
 func (i *InstaClient) GetLikedPosts(options map[string]string) (*UserFeed, error) {
 	var feed UserFeed
 	err := i.get("/users/self/media/liked", options, &feed)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &feed, nil
 }
-
-
-

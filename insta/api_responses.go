@@ -16,8 +16,11 @@ type SearchResult struct {
 
 // A single user
 type User struct {
-	Id       string `json:"id"`
-	Username string `json:"username"`
+	Id             string `json:"id"`
+	Username       string `json:"username"`
+	FirstName      string `json:"first_name"`
+	LastName       string `json:"last_name"`
+	ProfilePicture string `json:"profile_picture"`
 }
 
 // Instagram user's feed
@@ -60,6 +63,7 @@ type ImageCaption struct {
 }
 
 type ImageLocation struct {
+	Name      string  `json"location"`
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 }

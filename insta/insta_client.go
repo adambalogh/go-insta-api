@@ -47,7 +47,7 @@ func (i *InstaClient) get(endpointUrl string, options map[string]string, resultT
 	if err != nil {
 		return err
 	}
-	// Decode JSON to get posts
+	// Unmarshal JSON into given struct type
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&resultType)
 	if err != nil {

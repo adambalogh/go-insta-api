@@ -22,9 +22,9 @@ type InstaClient struct {
 
 // Send request to Instagram API and unmarshal received data
 func (i *InstaClient) get(endpointUrl string, options map[string]string, resultType interface{}) error {
-	// Encode options to Query String
+	// Convert the options into URL values
 	urlParameters := url.Values{}
-	// TODO not all encdpoints require access tokens
+	// TODO not all endpoints require access tokens
 	urlParameters.Add("access_token", i.AccessToken)
 	for key, value := range options {
 		urlParameters.Add(key, value)
@@ -42,7 +42,7 @@ func (i *InstaClient) get(endpointUrl string, options map[string]string, resultT
 	// Add query string to url
 	u.RawQuery = urlParameters.Encode()
 
-	// Get posts from given URL
+	// Send request to Instagram API
 	resp, err := http.Get(u.String())
 	if err != nil {
 		return err

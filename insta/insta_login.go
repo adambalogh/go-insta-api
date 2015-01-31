@@ -22,11 +22,6 @@ type InstaLogin struct {
 	RedirectUrl  string
 }
 
-// Instagram access token response
-type AccessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-}
-
 // Return Instagram login page's URL
 func (n *InstaLogin) GetLoginUrl() string {
 	return fmt.Sprintf(authorizationUrl, n.ClientId, n.RedirectUrl)

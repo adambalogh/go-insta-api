@@ -7,9 +7,6 @@ import (
 
 func (i *InstaClient) SearchUser(queryString string, options map[string]string) (*SearchResult, error) {
 	options["q"] = queryString
-	if _, ok := options["count"]; !ok {
-		options["count"] = "10"
-	}
 
 	var searchResult SearchResult
 	err := i.get("/users/search", options, &searchResult)

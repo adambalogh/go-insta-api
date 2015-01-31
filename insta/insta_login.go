@@ -14,7 +14,7 @@ const (
 	accessTokenUrl = "https://api.instagram.com/oauth/access_token"
 )
 
-// This class is solely used to retrieve access
+// This struct is solely used to retrieve access
 // token to authenticate InstaClient class
 type InstaLogin struct {
 	ClientId     string
@@ -27,13 +27,12 @@ type AccessTokenResponse struct {
 	AccessToken string `json:"access_token"`
 }
 
-// Return Instagram Login page's URL
+// Return Instagram login page's URL
 func (n *InstaLogin) GetLoginUrl() string {
 	return fmt.Sprintf(authorizationUrl, n.ClientId, n.RedirectUrl)
 }
 
-// Get Access token using code returned from Instagram's
-// login page
+// Get Access token using code returned from Instagram's login page
 func (n *InstaLogin) ExchangeCodeForAccessToken(code string) (string, error) {
 	// HTTP POST form values required for code exchange
 	params := url.Values{}

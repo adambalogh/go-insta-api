@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	// Get user's recent posts
+	// Get user's posts
 	userFeedUrl = "https://api.instagram.com/v1/users/%s/media/recent/?access_token=%s"
 	// Search for user based on username
 	userSearchUrl = "https://api.instagram.com/v1/users/search?q=%s&count=1&access_token=%s"
@@ -16,13 +16,13 @@ const (
 
 // Instagram API client, it normally it requires an access
 // token, but some parts of the API can be accessed by just
-// using the client ID
+// using the client ID, please check the Instagram API doc
 type InstaClient struct {
 	ClientId    string
 	AccessToken string
 }
 
-// Get user ID from username
+// Returns user ID associated with given username
 func (i *InstaClient) GetUserId(username string) (string, error) {
 	// Create URL for searching users with given username
 	url := fmt.Sprintf(userSearchUrl, username, i.AccessToken)
@@ -50,7 +50,7 @@ func (i *InstaClient) GetUserId(username string) (string, error) {
 // Builds an URL for retrieving user's posts based on the options received
 // it accepts the following arguments:
 //
-// - maxId: the first post retrieved will have an ID smaller than this
+// - maxId: the retrieved posts will have an Id smaller than this
 //
 func (i *InstaClient) getPosts(username string, options map[string]string) ([]Post, error) {
 	// Get User ID for given username
@@ -58,9 +58,10 @@ func (i *InstaClient) getPosts(username string, options map[string]string) ([]Po
 	if err != nil {
 		return nil, err
 	}
-	// Create URL to get user's recent posts
+	// Create generic URL to get user's posts
 	url := fmt.Sprintf(userFeedUrl, userId, i.AccessToken)
-
+	
+	// Parse options
 	if maxId, contains := options["maxId"]; contains {
 		url += "&max_id=" + string(maxId)
 	}

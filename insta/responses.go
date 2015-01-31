@@ -20,6 +20,11 @@ type UserFeed struct {
 	Posts []Post `json:"Data"`
 }
 
+// Return Id of last post in feed
+func (u *UserFeed) GetMinId() string {
+	return u.Posts[len(u.Posts)-1].Id
+}
+
 // User post including image, likes, comments etc.
 type Post struct {
 	Id       string        `json:"id"`

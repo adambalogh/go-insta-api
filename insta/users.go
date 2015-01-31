@@ -7,9 +7,11 @@ import (
 
 const (
 	// Get user's posts
-	userFeedUrl = "users/%s/media/recent"
+	userFeedUrl = "/users/%s/media/recent"
 	// Search for user based on username
-	userSearchUrl = "users/search?q=%s&count=1&access_token=%s"
+	userSearchUrl = "/users/search?q=%s&count=1&access_token=%s"
+	// Current user's liked posts
+	likedPostsUrl = "/users/self/media/liked"
 )
 
 // Returns user ID associated with given username
@@ -32,7 +34,7 @@ func (i *InstaClient) GetUserId(username string) (string, error) {
 //
 // - max_id: the retrieved posts will have an Id smaller than this
 //
-func (i *InstaClient) getPosts(username string, options map[string]string) ([]Post, error) {
+func (i *InstaClient) getPosts(username string, options map[string]string) (*UserFeed, error) {
 	// Get User ID for given username
 	userId, err := i.GetUserId(username)
 	if err != nil {
@@ -47,17 +49,31 @@ func (i *InstaClient) getPosts(username string, options map[string]string) ([]Po
 		return nil, err
 	}
 
-	return feed.Posts, nil
+	return &feed, nil
 }
 
 // Returns the user's latest posts
-func (i *InstaClient) GetRecentPosts(username string) ([]Post, error) {
+func (i *InstaClient) GetRecentPosts(username string) (*UserFeed, error) {
 	return i.getPosts(username, make(map[string]string))
 }
 
 // Returns a users's latest posts that have an ID smaller than maxId
-func (i *InstaClient) GetPostsWithMaxId(username string, maxId string) ([]Post, error) {
+func (i *InstaClient) GetPostsWithMaxId(username string, maxId string) (*UserFeed, error) {
 	return i.getPosts(username, map[string]string{
 		"max_id": maxId,
 	})
 }
+
+// Get User's liked posts
+func (i *InstaClient) GetLikedPosts(options map[string]string) (*UserFeed, error) {
+	var feed UserFeed
+	err := i.get(likedPostsUrl, options, &feed)
+	if err != nil {
+		return nil, err
+	}
+	
+	return &feed, nil
+}
+
+
+

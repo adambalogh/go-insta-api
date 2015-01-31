@@ -9,7 +9,7 @@ import (
 
 const (
 	// Base Instagram API URL
-	instagramApiBaseUrl = "https://api.instagram.com/v1/"
+	instagramApiBaseUrl = "https://api.instagram.com/v1"
 )
 
 // Instagram API client, it normally it requires an access
@@ -30,8 +30,9 @@ func (i *InstaClient) get(endpointUrl string, options map[string]string, resultT
 		urlParameters.Add(key, value)
 	}
 
-	// Parse Instagram API url
-	completeUrl = instagramApiBaseUrl + endpointUrl
+	// Convert full API url into URL struct, so we can
+	// add the query string
+	completeUrl := instagramApiBaseUrl + endpointUrl
 	u, err := url.Parse(completeUrl)
 	if err != nil {
 		fmt.Println(err)

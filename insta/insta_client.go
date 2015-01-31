@@ -90,7 +90,7 @@ func (i *InstaClient) getPostsFromUrl(url string) ([]Post, error) {
 	}
 	// Decode JSON to get posts
 	decoder := json.NewDecoder(resp.Body)
-	var result UserFeedResult
+	var result UserFeed
 	err = decoder.Decode(&result)
 	if err != nil {
 		return nil, err
@@ -112,18 +112,20 @@ type UserId struct {
 }
 
 // Instagram response for a user's feed request
-type UserFeedResult struct {
+type UserFeed struct {
 	Posts []Post `json:"Data"`
 }
 
 // User post including image, likes, comments etc.
 type Post struct {
-	Images FeedImage `json:"images"`
 	Id     string    `json:"id"`
+	Images FeedImage `json:"images"`
 }
 
 // A single image with multiple resolutions
 type FeedImage struct {
+	Thumbnail ImageUrl `json:"thumbnail"`
+	LowResolution ImageUrl `json:"low_resolution"`
 	StandardResolution ImageUrl `json:"standard_resolution"`
 }
 

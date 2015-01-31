@@ -14,17 +14,17 @@ const (
 	accessTokenUrl = "https://api.instagram.com/oauth/access_token"
 )
 
-// Instagram access token response
-type AccessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-}
-
 // This class is solely used to retrieve access
 // token to authenticate InstaClient class
 type InstaLogin struct {
 	ClientId     string
 	ClientSecret string
 	RedirectUrl  string
+}
+
+// Instagram access token response
+type AccessTokenResponse struct {
+	AccessToken string `json:"access_token"`
 }
 
 // Return Instagram Login page's URL

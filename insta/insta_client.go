@@ -95,10 +95,7 @@ func (i *InstaClient) getPostsFromUrl(url string) ([]Post, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	if len(result.Posts) == 0 {
-		return nil, errors.New("This user doesn't have any public posts")
-	}
+	
 	return result.Posts, nil
 }
 

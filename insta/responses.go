@@ -1,5 +1,9 @@
 package insta
 
+import (
+	"errors"
+)
+
 // Instagram access token response
 type AccessTokenResponse struct {
 	AccessToken string `json:"access_token"`
@@ -7,12 +11,13 @@ type AccessTokenResponse struct {
 
 // User search result
 type SearchResult struct {
-	Users []UserId `json:"data"`
+	Users []User `json:"data"`
 }
 
-// A single user's ID
-type UserId struct {
+// A single user
+type User struct {
 	Id string `json:"id"`
+	Username string `json:"username"`
 }
 
 // Instagram user's feed
@@ -21,8 +26,11 @@ type UserFeed struct {
 }
 
 // Return Id of last post in feed
-func (u *UserFeed) GetMinId() string {
-	return u.Posts[len(u.Posts)-1].Id
+func (u *UserFeed) GetMinId() (string, error) {
+	if len(u.Posts) == 0 {
+		return "", errors.New("This feed contains no posts")
+	}
+	return u.Posts[len(u.Posts)-1].Id, nil
 }
 
 // User post including image, likes, comments etc.

@@ -5,22 +5,28 @@ import (
 	"fmt"
 )
 
-const (
-	// Get user's posts
-	userFeedUrl = "/users/%s/media/recent"
-	// Search for user based on username
-	userSearchUrl = "/users/search?q=%s&count=1&access_token=%s"
-	// Current user's liked posts
-	likedPostsUrl = "/users/self/media/liked"
-)
+func (i *InstaClient) SearchUser(queryString string, options map[string]string) (*SearchResult, error) {
+	options["q"] = queryString
+	if _, ok := options["count"]; !ok {
+		options["count"] = "10"
+	}
+	
+	var searchResult SearchResult
+	err := i.get("/users/search", options, &searchResult)
+	if err != nil {
+		return nil, err
+	}
+
+	return &searchResult, nil
+}
 
 // Returns user ID associated with given username
 func (i *InstaClient) GetUserId(username string) (string, error) {
-	var searchResult SearchResult
-	i.get(userSearchUrl, map[string]string{
-		"q": username,
-	}, &searchResult)
-
+	searchResult, err := i.SearchUser(username, map[string]string{"count": "1"})
+	if err != nil {
+		return "", err
+	}
+	
 	// If no user was found, return
 	if len(searchResult.Users) == 0 {
 		return "", errors.New("No user found with username " + username)
@@ -34,17 +40,9 @@ func (i *InstaClient) GetUserId(username string) (string, error) {
 //
 // - max_id: the retrieved posts will have an Id smaller than this
 //
-func (i *InstaClient) getPosts(username string, options map[string]string) (*UserFeed, error) {
-	// Get User ID for given username
-	userId, err := i.GetUserId(username)
-	if err != nil {
-		return nil, err
-	}
-	// Create generic URL to get user's posts
-	url := fmt.Sprintf(userFeedUrl, userId)
-
+func (i *InstaClient) getPosts(userId string, options map[string]string) (*UserFeed, error) {
 	var feed UserFeed
-	err = i.get(url, options, &feed)
+	err := i.get(fmt.Sprintf("/users/%s/media/recent", userId), options, &feed)
 	if err != nil {
 		return nil, err
 	}
@@ -53,13 +51,13 @@ func (i *InstaClient) getPosts(username string, options map[string]string) (*Use
 }
 
 // Returns the user's latest posts
-func (i *InstaClient) GetRecentPosts(username string) (*UserFeed, error) {
-	return i.getPosts(username, make(map[string]string))
+func (i *InstaClient) GetRecentPosts(userId string) (*UserFeed, error) {
+	return i.getPosts(userId, make(map[string]string))
 }
 
 // Returns a users's latest posts that have an ID smaller than maxId
-func (i *InstaClient) GetPostsWithMaxId(username string, maxId string) (*UserFeed, error) {
-	return i.getPosts(username, map[string]string{
+func (i *InstaClient) GetPostsWithMaxId(userId string, maxId string) (*UserFeed, error) {
+	return i.getPosts(userId, map[string]string{
 		"max_id": maxId,
 	})
 }
@@ -67,7 +65,7 @@ func (i *InstaClient) GetPostsWithMaxId(username string, maxId string) (*UserFee
 // Get User's liked posts
 func (i *InstaClient) GetLikedPosts(options map[string]string) (*UserFeed, error) {
 	var feed UserFeed
-	err := i.get(likedPostsUrl, options, &feed)
+	err := i.get("/users/self/media/liked", options, &feed)
 	if err != nil {
 		return nil, err
 	}

@@ -16,7 +16,7 @@ const (
 
 // authApi is used for logging in the user, authenticating
 // the application and getting the access token
-var authApi insta.InstaLogin
+var authApi *insta.InstaLogin
 
 /*
   Search for users
@@ -89,7 +89,7 @@ func getTokenFromCookie(r *http.Request) string {
 
 func main() {
 	// Create Instagram Login client
-	authApi = insta.InstaLogin{ClientID: clientID, ClientSecret: clientSecret, RedirectURL: redirectURL}
+	authApi = insta.NewInstaLogin(clientID, clientSecret, redirectURL)
 	// Handle authentication
 	http.HandleFunc("/login", RedirectToLogin)
 	http.HandleFunc("/oauth-complete", GetAccessToken)

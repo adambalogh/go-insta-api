@@ -14,18 +14,47 @@ type SearchResult struct {
 	Users []User `json:"data"`
 }
 
-// A single user
-type User struct {
+// User struct with minimal information
+// Passed along with every post when viewing a user's feed
+type BaseUser struct {
 	Id             string `json:"id"`
 	Username       string `json:"username"`
-	FirstName      string `json:"first_name"`
-	LastName       string `json:"last_name"`
 	ProfilePicture string `json:"profile_picture"`
 }
 
+// Passed along with every post when viewing currently
+// authenticated user's liked posts or current user's feed
+type UserWithFullName struct {
+	BaseUser
+	FullName string `json:"full_name"`
+}
+
+// Returned when searching for users based on query string
+type UserWithStructuredName struct {
+	BaseUser
+	FirstName `json:"first_name"`
+	LastName `json:"last_name"`
+}
+
+type UserWithFullDetails struct {
+	UserWithFullName
+	Bio string `json:"bio"`
+	Website string `json:"website"`
+	Counts UserStatistics `json:"counts"`
+}
+
+// Contains the number of posts, followers and follows of an user
+type UserStatistics struct {
+	Media int `json:"media"`
+	Follows int `json:"follows"`
+	FollowedBy int `json:"followed_by"`
+}
+
+
+
 // Instagram user's feed
 type UserFeed struct {
-	Posts []Post `json:"Data"`
+	Posts []Post `json:"data"`
 }
 
 // Return Id of last post in feed

@@ -22,7 +22,7 @@ type InstaClient struct {
 }
 
 // Send request to Instagram API and unmarshal received data
-func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, resultType ApiMetaReporter) error {
+func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, resultType interface{}) error {
 	// Convert the options into URL values
 	urlParameters := url.Values{}
 	// TODO not all endpoints require access tokens
@@ -49,6 +49,12 @@ func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, 
 	if err != nil {
 		return err
 	}
+	// Check response code
+	if resp.StatusCode != 200 {
+		// TODO Extract error message from API response
+		return newApiError(resp)
+	}
+	
 	// Unmarshal JSON into given struct type
 	decoder := json.NewDecoder(resp.Body)
 	err = decoder.Decode(&resultType)
@@ -56,10 +62,16 @@ func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, 
 		return err
 	}
 	
-	// Check response code
-	if resultType.GetMeta().Code != 200 {
-		return errors.New(resultType.GetMeta().ErrorType + "\n" + resultType.GetMeta().ErrorMessage)
+	return nil
+}
+
+func newApiError(r *http.Response) error {
+	var meta ApiResponse
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&meta)	
+	if err != nil {
+		return err
 	}
 	
-	return nil
+	return errors.New(meta.Meta.ErrorType + "\n" + meta.Meta.ErrorMessage)
 }

@@ -118,7 +118,6 @@ func newApiError(r *http.Response) error {
 
 // decodeBody decoodes a HTTP response's body into the requested interface type
 func decodeBody(body io.Reader, resultType interface{}) error {
-	// Unmarshal JSON into given struct type
 	decoder := json.NewDecoder(body)
 	err := decoder.Decode(resultType)
 	if err != nil {

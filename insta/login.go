@@ -25,12 +25,12 @@ type InstaLogin struct {
 
 // NewInstaLogin returns an initialized InstaLogin, with a SimpleHTTPRequester
 func NewInstaLogin(clientID, clientSecret, redirectURL string) *InstaLogin {
-	return &InstaLogin{
-		HTTPRequester: SimpleHTTPRequester{},
-		ClientID:      clientID,
-		ClientSecret:  clientSecret,
-		RedirectURL:   redirectURL,
-	}
+	login := new(InstaLogin)
+	login.HTTPRequester = SimpleHTTPRequester{}
+	login.ClientID = clientID
+	login.ClientSecret = clientSecret
+	login.RedirectURL = redirectURL
+	return login
 }
 
 // GetLoginURL returns Instagram login page's URL

@@ -25,15 +25,15 @@ type PaginatedApiResponse struct {
 
 // Pagination info
 type ResponsePagination struct {
-	NextUrl       string `json:"next_url"`
-	NextMaxId     string `json:"next_max_id"`
-	NextMaxLikeId string `json:"next_max_like_id"`
+	NextURL       string `json:"next_url"`
+	NextMaxID     string `json:"next_max_id"`
+	NextMaxLikeID string `json:"next_max_like_id"`
 }
 
 // User struct with minimal information
 // Passed along with every post when viewing a user's feed
 type BaseUser struct {
-	Id             string `json:"id"`
+	ID             string `json:"id"`
 	Username       string `json:"username"`
 	ProfilePicture string `json:"profile_picture"`
 }
@@ -87,7 +87,7 @@ type UserFeed struct {
 
 // User post including image, likes, comments etc.
 type Post struct {
-	Id       string        `json:"id"`
+	ID       string        `json:"id"`
 	Images   PostImage     `json:"images"`
 	Tags     []string      `json:"tags"`
 	Caption  ImageCaption  `json:"caption"`
@@ -96,14 +96,14 @@ type Post struct {
 
 // A single image with multiple resolutions
 type PostImage struct {
-	Thumbnail          ImageUrl `json:"thumbnail"`
-	LowResolution      ImageUrl `json:"low_resolution"`
-	StandardResolution ImageUrl `json:"standard_resolution"`
+	Thumbnail          ImageURL `json:"thumbnail"`
+	LowResolution      ImageURL `json:"low_resolution"`
+	StandardResolution ImageURL `json:"standard_resolution"`
 }
 
 // A single image url
-type ImageUrl struct {
-	Url string `json:"url"`
+type ImageURL struct {
+	URL string `json:"url"`
 }
 
 // Caption for post

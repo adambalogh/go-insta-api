@@ -67,6 +67,12 @@ type UserStatistics struct {
 	FollowedBy int `json:"followed_by"`
 }
 
+// FollowsResult contains a list of followed users
+type FollowsResult struct {
+	ApiResponse
+	Users []UserWithFullName `json:"data"`
+}
+
 // User profile lookup result
 type UserProfileResult struct {
 	ApiResponse

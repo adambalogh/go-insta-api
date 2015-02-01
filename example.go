@@ -25,7 +25,7 @@ var authApi insta.InstaLogin
 func SearchUser(w http.ResponseWriter, r *http.Request) {
 	token := getTokenFromCookie(r)
 	// Create authenticated Instagram CLient
-	client := insta.InstaClient{AccessToken: token}
+	client := insta.NewInstaClient(token)
 
 	queryString := r.URL.Query().Get("q")
 	

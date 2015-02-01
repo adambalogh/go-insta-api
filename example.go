@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"./insta"
+	"github.com/adambalogh/go-insta-api/insta"
 )
 
 const (

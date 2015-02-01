@@ -25,9 +25,9 @@ type PaginatedApiResponse struct {
 
 // Pagination info
 type ResponsePagination struct {
-	NextURL       string `json:"next_url"`
-	NextMaxID     string `json:"next_max_id"`
-	NextMaxLikeID string `json:"next_max_like_id"`
+	NextURL        string `json:"next_url"`
+	NextMaxID      string `json:"next_max_id"`
+	NextMaxLikedID string `json:"next_max_like_id"`
 }
 
 // User struct with minimal information

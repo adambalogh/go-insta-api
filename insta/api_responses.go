@@ -5,17 +5,9 @@ type AccessTokenResponse struct {
 	AccessToken string `json:"access_token"`
 }
 
-type ApiMetaReporter interface {
-	GetMeta() ResponseMeta
-}
-
 // Base struct for every Instagram API response
 type ApiResponse struct {
 	Meta ResponseMeta `json:"meta"`
-}
-
-func (a *ApiResponse) GetMeta() ResponseMeta{
-	return a.Meta
 }
 
 // Metainfo for the response, can contain errors

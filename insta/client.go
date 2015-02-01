@@ -20,7 +20,7 @@ type InstaClient struct {
 	AccessToken string
 }
 
-// requestURL sends request to Instagram API and unmarshals received data.
+// getRequest sends GET request to Instagram API and unmarshals received data.
 func (i *InstaClient) getRequest(endpointURL string, options map[string]string, resultType interface{}) error {
 	// Convert the options into URL query string
 	urlParameters := url.Values{}

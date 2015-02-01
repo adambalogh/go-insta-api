@@ -3,6 +3,7 @@ package insta
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 )
@@ -47,14 +48,26 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 	if err != nil {
 		return err
 	}
+
 	// Check response code
 	if resp.StatusCode != 200 {
 		return newApiError(resp)
 	}
 
+	// Decode JSON response into given struct
+	err = decodeBody(resp.Body, &resultType)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// decodeBody decoodes a HTTP response's body into the requested interface type
+func decodeBody(body io.Reader, resultType interface{}) error {
 	// Unmarshal JSON into given struct type
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&resultType)
+	decoder := json.NewDecoder(body)
+	err := decoder.Decode(&resultType)
 	if err != nil {
 		return err
 	}
@@ -73,11 +86,7 @@ func (a ApiError) Error() string {
 // newApiError returns the error sent by the Instagram API.
 func newApiError(r *http.Response) error {
 	var meta ApiResponse
-	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&meta)
-	if err != nil {
-		return err
-	}
+	decodeBody(r.Body, &meta)
 
 	return ApiError(meta.Meta)
 }

@@ -14,6 +14,8 @@ const (
 	redirectURL  = ""
 )
 
+// authApi is used for logging in the user, authenticating
+// the application and getting the access token
 var authApi insta.InstaLogin
 
 

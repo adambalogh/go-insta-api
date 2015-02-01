@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"errors"
 )
 
 const (
@@ -21,12 +20,12 @@ type InstaClient struct {
 	AccessToken string
 }
 
-// Send request to Instagram API and unmarshal received data
+// Sends request to Instagram API and unmarshals received data
 func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, resultType interface{}) error {
 	// Convert the options into URL values
 	urlParameters := url.Values{}
 	// TODO not all endpoints require access tokens
-	urlParameters.Add("access_token", i.AccessToken)
+	//urlParameters.Add("access_token", i.AccessToken)
 	for key, value := range options {
 		urlParameters.Add(key, value)
 	}
@@ -65,6 +64,13 @@ func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, 
 	return nil
 }
 
+// Represents an error originating from the Instagram API
+type ApiError ResponseMeta
+
+func (a ApiError) Error() string {
+	return fmt.Sprintf("Instagram API error: Code: %d, Type: %s, Message: %s", a.Code, a.ErrorType, a.ErrorMessage)
+}
+
 // Returns the error sent by the Instagram APi
 func newApiError(r *http.Response) error {
 	var meta ApiResponse
@@ -74,5 +80,5 @@ func newApiError(r *http.Response) error {
 		return err
 	}
 	
-	return errors.New(meta.Meta.ErrorType + "\n" + meta.Meta.ErrorMessage)
+	return ApiError(meta.Meta)
 }

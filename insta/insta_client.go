@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"errors"
 )
 
 const (
@@ -21,7 +22,7 @@ type InstaClient struct {
 }
 
 // Send request to Instagram API and unmarshal received data
-func (i *InstaClient) get(endpointUrl string, options map[string]string, resultType interface{}) error {
+func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, resultType ApiMetaReporter) error {
 	// Convert the options into URL values
 	urlParameters := url.Values{}
 	// TODO not all endpoints require access tokens
@@ -41,6 +42,7 @@ func (i *InstaClient) get(endpointUrl string, options map[string]string, resultT
 
 	// Add query string to url
 	u.RawQuery = urlParameters.Encode()
+	fmt.Println(u.String())
 
 	// Send request to Instagram API
 	resp, err := http.Get(u.String())
@@ -53,5 +55,11 @@ func (i *InstaClient) get(endpointUrl string, options map[string]string, resultT
 	if err != nil {
 		return err
 	}
+	
+	// Check response code
+	if resultType.GetMeta().Code != 200 {
+		return errors.New(resultType.GetMeta().ErrorType + "\n" + resultType.GetMeta().ErrorMessage)
+	}
+	
 	return nil
 }

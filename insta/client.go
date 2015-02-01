@@ -41,14 +41,10 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 
 	// Add query string to request url
 	u.RawQuery = urlParameters.Encode()
-	fmt.Println(u.String())
-
+	//fmt.Println(u.String())
+	
 	// Send request
-	resp, err := http.Get(u.String())
-	if err != nil {
-		return err
-	}
-
+	resp, err := i.sendGetRequest(u.String())
 	// Check response code
 	if resp.StatusCode != 200 {
 		return newApiError(resp)
@@ -61,6 +57,16 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 	}
 
 	return nil
+}
+
+// sendRequest sends a HTTP GET request to the requested URL
+func (i *InstaClient) sendGetRequest(url string) (*http.Response, error) {
+	// Send request
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 // decodeBody decoodes a HTTP response's body into the requested interface type

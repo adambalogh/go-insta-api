@@ -7,6 +7,10 @@ import (
 
 // Returns full user profile for user ID
 func (i* InstaClient) GetUserProfile(userId string) (*UserWithFullDetails, error){
+	if len(userId) == 0 {
+		return nil, errors.New("User ID cannot be empty")
+	}
+	
 	var userProfileResult UserProfileResult
 	err := i.requestUrl(fmt.Sprintf("/users/%s", userId), map[string]string{}, &userProfileResult)
 	if err != nil {
@@ -27,6 +31,10 @@ func (i *InstaClient) GetSelfFeed() (*UserFeed, error) {
 
 // Searches for users based on query string
 func (i *InstaClient) SearchUser(queryString string, options map[string]string) (*SearchResult, error) {
+	if len(queryString) == 0 {
+		return nil, errors.New("query string cannot be empty")
+	}
+	
 	options["q"] = queryString // add query string to options map
 	var searchResult SearchResult
 	err := i.requestUrl("/users/search", options, &searchResult)
@@ -55,6 +63,10 @@ func (i *InstaClient) GetUserId(username string) (string, error) {
 // - max_id: the retrieved posts will have an Id smaller than this
 //
 func (i *InstaClient) GetPosts(userId string, options map[string]string) (*UserFeed, error) {
+	if len(userId) == 0 {
+		return nil, errors.New("User ID cannot be empty")
+	}
+	
 	var feed UserFeed
 	err := i.requestUrl(fmt.Sprintf("/users/%s/media/recent", userId), options, &feed)
 	if err != nil {

@@ -1,17 +1,41 @@
 package insta
 
-import (
-	"errors"
-)
-
 // Instagram access token response
 type AccessTokenResponse struct {
 	AccessToken string `json:"access_token"`
 }
 
-// User search result
-type SearchResult struct {
-	Users []User `json:"data"`
+type ApiMetaReporter interface {
+	GetMeta() ResponseMeta
+}
+
+// Base struct for every Instagram API response
+type ApiResponse struct {
+	Meta ResponseMeta `json:"meta"`
+}
+
+func (a *ApiResponse) GetMeta() ResponseMeta{
+	return a.Meta
+}
+
+// Metainfo for the response, can contain errors
+type ResponseMeta struct {
+	Code         int    `json:"code"`
+	ErrorType    string `json:"error_type"`
+	ErrorMessage string `json:"error_message"`
+}
+
+// Contains pagination info for sequential data
+type PaginatedApiResponse struct {
+	ApiResponse
+	Pagination ResponsePagination
+}
+
+// Pagination info
+type ResponsePagination struct {
+	NextUrl       string `json:"next_url"`
+	NextMaxId     string `json:"next_max_id"`
+	NextMaxLikeId string `json:"next_max_like_id"`
 }
 
 // User struct with minimal information
@@ -32,37 +56,41 @@ type UserWithFullName struct {
 // Returned when searching for users based on query string
 type UserWithStructuredName struct {
 	BaseUser
-	FirstName `json:"first_name"`
-	LastName `json:"last_name"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
 }
 
+// Returned when requesting a user's profile
 type UserWithFullDetails struct {
 	UserWithFullName
-	Bio string `json:"bio"`
-	Website string `json:"website"`
-	Counts UserStatistics `json:"counts"`
+	Bio     string         `json:"bio"`
+	Website string         `json:"website"`
+	Counts  UserStatistics `json:"counts"`
 }
 
 // Contains the number of posts, followers and follows of an user
 type UserStatistics struct {
-	Media int `json:"media"`
-	Follows int `json:"follows"`
+	Media      int `json:"media"`
+	Follows    int `json:"follows"`
 	FollowedBy int `json:"followed_by"`
 }
 
+// User profile lookup result
+type UserProfileResult struct {
+	ApiResponse
+	UserProfile UserWithFullDetails `json:"data"`
+}
 
+// User search result
+type SearchResult struct {
+	PaginatedApiResponse
+	Users []UserWithStructuredName `json:"data"`
+}
 
 // Instagram user's feed
 type UserFeed struct {
+	PaginatedApiResponse
 	Posts []Post `json:"data"`
-}
-
-// Return Id of last post in feed
-func (u *UserFeed) GetMinId() (string, error) {
-	if len(u.Posts) == 0 {
-		return "", errors.New("This feed contains no posts")
-	}
-	return u.Posts[len(u.Posts)-1].Id, nil
 }
 
 // User post including image, likes, comments etc.

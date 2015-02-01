@@ -55,7 +55,7 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 	}
 
 	// Decode JSON response into given struct
-	err = decodeBody(resp.Body, &resultType)
+	err = decodeBody(resp.Body, resultType)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 func decodeBody(body io.Reader, resultType interface{}) error {
 	// Unmarshal JSON into given struct type
 	decoder := json.NewDecoder(body)
-	err := decoder.Decode(&resultType)
+	err := decoder.Decode(resultType)
 	if err != nil {
 		return err
 	}

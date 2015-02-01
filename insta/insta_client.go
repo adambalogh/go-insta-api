@@ -65,6 +65,7 @@ func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, 
 	return nil
 }
 
+// Returns the error sent by the Instagram APi
 func newApiError(r *http.Response) error {
 	var meta ApiResponse
 	decoder := json.NewDecoder(r.Body)

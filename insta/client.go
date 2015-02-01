@@ -33,8 +33,7 @@ func (s SimpleHTTPRequester) SendGetRequest(url string) (*http.Response, error) 
 	return resp, nil
 }
 
-// SendPostRequest sends a HTTP POST request with the given form values
-// to the requested URL
+// SendPostRequest sends a HTTP POST request with the given form values to the requested URL
 func (s SimpleHTTPRequester) SendPostRequest(url string, formValues url.Values) (*http.Response, error) {
 	client := &http.Client{}
 	resp, err := client.PostForm(url, formValues)
@@ -44,17 +43,16 @@ func (s SimpleHTTPRequester) SendPostRequest(url string, formValues url.Values) 
 	return resp, nil
 }
 
-// Instagram API client, it normally it requires an access
-// token, but some parts of the API can be accessed by just
-// using the client ID, please check the Instagram API doc.
+// InstaCLient gives access to the Instagram API client
+// It normally it requires an access token, but some parts of the API can be
+// accessed by just using the client ID, please check the Instagram API doc.
 type InstaClient struct {
 	HTTPRequester
 	ClientID    string
 	AccessToken string
 }
 
-// NewInstaClient returns an initialized InstaClient, with
-// a basic HTTPRequester
+// NewInstaClient returns an initialized InstaClient, with a basic HTTPRequester
 func NewInstaClient(accessToken string) *InstaClient {
 	client := new(InstaClient)
 	client.HTTPRequester = SimpleHTTPRequester{}
@@ -62,7 +60,7 @@ func NewInstaClient(accessToken string) *InstaClient {
 	return client
 }
 
-// getRequest sends GET request to Instagram API and unmarshals received data.
+// getRequest dispatches a GET request to the Instagram API and unmarshals the received data.
 func (i *InstaClient) getRequest(endpointURL string, options map[string]string, resultType interface{}) error {
 	// Convert the options into URL query string
 	urlParameters := url.Values{}
@@ -82,10 +80,12 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 
 	// Add query string to request url
 	u.RawQuery = urlParameters.Encode()
-	//fmt.Println(u.String())
 
 	// Send request
 	resp, err := i.SendGetRequest(u.String())
+	if err != nil {
+		return err
+	}
 	// Check response code
 	if resp.StatusCode != 200 {
 		return newApiError(resp)

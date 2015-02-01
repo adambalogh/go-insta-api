@@ -16,16 +16,28 @@ const (
 // HTTPRequester sends HTTP requests
 type HTTPRequester interface {
 	SendGetRequest(url string) (*http.Response, error)
+	SendPostRequest(url string, formValues url.Values) (*http.Response, error)
 }
 
 // SimpleHTTPRequester sends HTTP requests using the built-in library
 type SimpleHTTPRequester struct {
 }
 
-// sendRequest sends a HTTP GET request to the requested URL
+// SendRequest sends a HTTP GET request to the requested URL
 func (s SimpleHTTPRequester) SendGetRequest(url string) (*http.Response, error) {
 	// Send request
 	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// SendPostRequest sends a HTTP POST request with the given form values
+// to the requested URL
+func (s SimpleHTTPRequester) SendPostRequest(url string, formValues url.Values) (*http.Response, error) {
+	client := &http.Client{}
+	resp, err := client.PostForm(url, formValues)
 	if err != nil {
 		return nil, err
 	}

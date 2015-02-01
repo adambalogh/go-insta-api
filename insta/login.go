@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 	"net/url"
 )
 
@@ -18,29 +17,39 @@ const (
 // This struct is solely used to retrieve access
 // token to authenticate InstaClient class
 type InstaLogin struct {
+	HTTPRequester
 	ClientID     string
 	ClientSecret string
 	RedirectURL  string
 }
 
+// NewInstaLogin returns an initialized InstaLogin, with a SimpleHTTPRequester
+func NewInstaLogin(clientID, clientSecret, redirectURL string) *InstaLogin {
+	return &InstaLogin{
+		HTTPRequester: SimpleHTTPRequester{},
+		ClientID:      clientID,
+		ClientSecret:  clientSecret,
+		RedirectURL:   redirectURL,
+	}
+}
+
 // GetLoginURL returns Instagram login page's URL
-func (n *InstaLogin) GetLoginURL() string {
-	return fmt.Sprintf(authorizationURL, n.ClientID, n.RedirectURL)
+func (i *InstaLogin) GetLoginURL() string {
+	return fmt.Sprintf(authorizationURL, i.ClientID, i.RedirectURL)
 }
 
 // ExchangeCodeForAccessToken exchanges the code received from Instagram's Login page
 // for an access token
-func (n *InstaLogin) ExchangeCodeForAccessToken(code string) (string, error) {
+func (i *InstaLogin) ExchangeCodeForAccessToken(code string) (string, error) {
 	// HTTP POST form values required for code exchange
 	params := url.Values{}
 	params.Add("code", code)
-	params.Add("client_id", n.ClientID)
-	params.Add("client_secret", n.ClientSecret)
+	params.Add("client_id", i.ClientID)
+	params.Add("client_secret", i.ClientSecret)
 	params.Add("grant_type", "authorization_code")
-	params.Add("redirect_uri", n.RedirectURL)
+	params.Add("redirect_uri", i.RedirectURL)
 	// Send HTTP POST request
-	client := &http.Client{}
-	resp, err := client.PostForm(accessTokenURL, params)
+	resp, err := i.SendPostRequest(accessTokenURL, params)
 	if err != nil {
 		return "", err
 	}

@@ -67,7 +67,7 @@ func GetAccessToken(w http.ResponseWriter, r *http.Request) {
 
 	accessToken, err := authApi.ExchangeCodeForAccessToken(code)
 	if err != nil {
-		fmt.Fprintf(w, "4Sorry an error occured %s", err)
+		fmt.Fprintf(w, "Sorry an error occured %s", err)
 		return
 	}
 

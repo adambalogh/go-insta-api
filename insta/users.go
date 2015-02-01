@@ -5,31 +5,31 @@ import (
 	"fmt"
 )
 
-// Returns full user profile for user ID
+// GetUserProfile returns the full user profile of the requested user ID.
 func (i *InstaClient) GetUserProfile(userID string) (*UserWithFullDetails, error) {
 	if len(userID) == 0 {
 		return nil, errors.New("User ID cannot be empty")
 	}
 
 	var userProfileResult UserProfileResult
-	err := i.requestURL(fmt.Sprintf("/users/%s", userID), map[string]string{}, &userProfileResult)
+	err := i.getRequest(fmt.Sprintf("/users/%s", userID), map[string]string{}, &userProfileResult)
 	if err != nil {
 		return nil, err
 	}
 	return &userProfileResult.UserProfile, err
 }
 
-// Returns currently authenticated user's feed
+// GetSelfFeed returns the currently authenticated user's feed.
 func (i *InstaClient) GetSelfFeed() (*UserFeed, error) {
 	var selfFeed UserFeed
-	err := i.requestURL("/users/self/feed", map[string]string{}, &selfFeed)
+	err := i.getRequest("/users/self/feed", map[string]string{}, &selfFeed)
 	if err != nil {
 		return nil, err
 	}
 	return &selfFeed, nil
 }
 
-// Searches for users based on query string
+// SearchUser searches for users based on the query string and returns the results.
 func (i *InstaClient) SearchUser(queryString string, options map[string]string) (*SearchResult, error) {
 	if len(queryString) == 0 {
 		return nil, errors.New("query string cannot be empty")
@@ -37,14 +37,14 @@ func (i *InstaClient) SearchUser(queryString string, options map[string]string) 
 
 	options["q"] = queryString // add query string to options map
 	var searchResult SearchResult
-	err := i.requestURL("/users/search", options, &searchResult)
+	err := i.getRequest("/users/search", options, &searchResult)
 	if err != nil {
 		return nil, err
 	}
 	return &searchResult, nil
 }
 
-// Returns user ID associated with given username
+// GetUserID returns the user ID associated with the requested username.
 func (i *InstaClient) GetUserID(username string) (string, error) {
 	searchResult, err := i.SearchUser(username, map[string]string{"count": "1"})
 	if err != nil {
@@ -57,8 +57,8 @@ func (i *InstaClient) GetUserID(username string) (string, error) {
 	return searchResult.Users[0].ID, nil
 }
 
-// Builds an URL for retrieving user's posts based on the options received
-// it accepts the following arguments:
+// GetPosts returns the requested user's posts
+// It accepts the following arguments:
 //
 // - max_id: the retrieved posts will have an ID smaller than this
 //
@@ -68,29 +68,30 @@ func (i *InstaClient) GetPosts(userID string, options map[string]string) (*UserF
 	}
 
 	var feed UserFeed
-	err := i.requestURL(fmt.Sprintf("/users/%s/media/recent", userID), options, &feed)
+	err := i.getRequest(fmt.Sprintf("/users/%s/media/recent", userID), options, &feed)
 	if err != nil {
 		return nil, err
 	}
 	return &feed, nil
 }
 
-// Returns the user's latest posts
+// GetRecentPosts returns the requested user's latest posts
 func (i *InstaClient) GetRecentPosts(userID string) (*UserFeed, error) {
 	return i.GetPosts(userID, map[string]string{})
 }
 
-// Returns a users's latest posts that have an ID smaller than maxID
+// GetPostsWithMaxID returns the requested users's latest posts
+// that have an ID smaller than maxID
 func (i *InstaClient) GetPostsWithMaxID(userID string, maxID string) (*UserFeed, error) {
 	return i.GetPosts(userID, map[string]string{
 		"max_id": maxID,
 	})
 }
 
-// Gets the currently logged in user's liked posts
+// GetLikedPosts returns the currently logged in user's liked posts
 func (i *InstaClient) GetLikedPosts(options map[string]string) (*UserFeed, error) {
 	var feed UserFeed
-	err := i.requestURL("/users/self/media/liked", options, &feed)
+	err := i.getRequest("/users/self/media/liked", options, &feed)
 	if err != nil {
 		return nil, err
 	}

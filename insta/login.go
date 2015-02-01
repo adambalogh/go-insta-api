@@ -22,12 +22,13 @@ type InstaLogin struct {
 	RedirectURL  string
 }
 
-// Return Instagram login page's URL
+// GetLoginURL returns Instagram login page's URL
 func (n *InstaLogin) GetLoginURL() string {
 	return fmt.Sprintf(authorizationURL, n.ClientID, n.RedirectURL)
 }
 
-// Get Access token using code returned from Instagram's login page
+// ExchangeCodeForAccessToken exchanges the code received from Instagram's Login page
+// for an access token
 func (n *InstaLogin) ExchangeCodeForAccessToken(code string) (string, error) {
 	// HTTP POST form values required for code exchange
 	params := url.Values{}

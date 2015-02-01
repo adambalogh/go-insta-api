@@ -20,7 +20,6 @@ type HTTPRequester interface {
 
 // SimpleHTTPRequester sends HTTP requests using the built-in library
 type SimpleHTTPRequester struct {
-	
 }
 
 // sendRequest sends a HTTP GET request to the requested URL
@@ -72,7 +71,7 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 	// Add query string to request url
 	u.RawQuery = urlParameters.Encode()
 	//fmt.Println(u.String())
-	
+
 	// Send request
 	resp, err := i.SendGetRequest(u.String())
 	// Check response code

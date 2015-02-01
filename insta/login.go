@@ -2,10 +2,10 @@ package insta
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
-	"errors"
 )
 
 const (
@@ -48,7 +48,7 @@ func (n *InstaLogin) ExchangeCodeForAccessToken(code string) (string, error) {
 	if resp.StatusCode != 200 {
 		return "", errors.New("Failed to authenticate")
 	}
-	
+
 	// Decode JSON to get AccessToken
 	decoder := json.NewDecoder(resp.Body)
 	var accessToken AccessTokenResponse

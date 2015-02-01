@@ -18,7 +18,6 @@ const (
 // the application and getting the access token
 var authApi insta.InstaLogin
 
-
 /*
   Search for users
 */
@@ -28,7 +27,7 @@ func SearchUser(w http.ResponseWriter, r *http.Request) {
 	client := insta.NewInstaClient(token)
 
 	queryString := r.URL.Query().Get("q")
-	
+
 	var searchResult *insta.SearchResult // SearchUser returns a pointer to a SearchResult struct
 	// Make request to Instagram API
 	searchResult, err := client.SearchUser(queryString, map[string]string{})
@@ -43,13 +42,12 @@ func SearchUser(w http.ResponseWriter, r *http.Request) {
 	htmlBody := bytes.Buffer{}
 	for _, user := range searchResult.Users {
 		htmlBody.WriteString("<p><a href=\"http://www.instagram.com/" +
-							user.Username + "\" />" +
-			 				user.Username + "</a></p>")
+			user.Username + "\" />" +
+			user.Username + "</a></p>")
 	}
 	// Return HTML page
-	fmt.Fprintf(w, htmlStart + htmlBody.String() + htmlEnd)
+	fmt.Fprintf(w, htmlStart+htmlBody.String()+htmlEnd)
 }
-
 
 /*
  Redirect user to Instagram's login page

@@ -13,12 +13,42 @@ const (
 	instagramApiBaseURL = "https://api.instagram.com/v1"
 )
 
+// HTTPRequester sends HTTP requests
+type HTTPRequester interface {
+	SendGetRequest(url string) (*http.Response, error)
+}
+
+// SimpleHTTPRequester sends HTTP requests using the built-in library
+type SimpleHTTPRequester struct {
+	
+}
+
+// sendRequest sends a HTTP GET request to the requested URL
+func (s SimpleHTTPRequester) SendGetRequest(url string) (*http.Response, error) {
+	// Send request
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 // Instagram API client, it normally it requires an access
 // token, but some parts of the API can be accessed by just
 // using the client ID, please check the Instagram API doc.
 type InstaClient struct {
+	HTTPRequester
 	ClientID    string
 	AccessToken string
+}
+
+// NewInstaClient returns an initialized InstaClient, with
+// a basic HTTPRequester
+func NewInstaClient(accessToken string) *InstaClient {
+	client := new(InstaClient)
+	client.HTTPRequester = SimpleHTTPRequester{}
+	client.AccessToken = accessToken
+	return client
 }
 
 // getRequest sends GET request to Instagram API and unmarshals received data.
@@ -44,7 +74,7 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 	//fmt.Println(u.String())
 	
 	// Send request
-	resp, err := i.sendGetRequest(u.String())
+	resp, err := i.SendGetRequest(u.String())
 	// Check response code
 	if resp.StatusCode != 200 {
 		return newApiError(resp)
@@ -52,28 +82,6 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 
 	// Decode JSON response into given struct
 	err = decodeBody(resp.Body, resultType)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// sendRequest sends a HTTP GET request to the requested URL
-func (i *InstaClient) sendGetRequest(url string) (*http.Response, error) {
-	// Send request
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-// decodeBody decoodes a HTTP response's body into the requested interface type
-func decodeBody(body io.Reader, resultType interface{}) error {
-	// Unmarshal JSON into given struct type
-	decoder := json.NewDecoder(body)
-	err := decoder.Decode(resultType)
 	if err != nil {
 		return err
 	}
@@ -95,4 +103,16 @@ func newApiError(r *http.Response) error {
 	decodeBody(r.Body, &meta)
 
 	return ApiError(meta.Meta)
+}
+
+// decodeBody decoodes a HTTP response's body into the requested interface type
+func decodeBody(body io.Reader, resultType interface{}) error {
+	// Unmarshal JSON into given struct type
+	decoder := json.NewDecoder(body)
+	err := decoder.Decode(resultType)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

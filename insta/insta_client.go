@@ -25,7 +25,7 @@ func (i *InstaClient) requestUrl(endpointUrl string, options map[string]string, 
 	// Convert the options into URL values
 	urlParameters := url.Values{}
 	// TODO not all endpoints require access tokens
-	//urlParameters.Add("access_token", i.AccessToken)
+	urlParameters.Add("access_token", i.AccessToken)
 	for key, value := range options {
 		urlParameters.Add(key, value)
 	}

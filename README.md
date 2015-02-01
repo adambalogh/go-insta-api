@@ -1,4 +1,4 @@
 # go-insta-api
-Instagram API for Go with limited functionality.
+Instagram API for Go.
 
-Currently it supports the Users endpoint and parts of the Relationships endpoint.
+It's under development and it currently supports the Users endpoint and parts of the Relationships endpoint.

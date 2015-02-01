@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"errors"
 )
 
 const (
@@ -43,6 +44,11 @@ func (n *InstaLogin) ExchangeCodeForAccessToken(code string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	// Check status code
+	if resp.StatusCode != 200 {
+		return "", errors.New("Failed to authenticate")
+	}
+	
 	// Decode JSON to get AccessToken
 	decoder := json.NewDecoder(resp.Body)
 	var accessToken AccessTokenResponse

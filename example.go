@@ -25,10 +25,7 @@ func SearchUser(w http.ResponseWriter, r *http.Request) {
 	token := getTokenFromCookie(r)
 	// Create authenticated Instagram CLient
 	client := insta.NewInstaClient(token)
-
 	queryString := r.URL.Query().Get("q")
-
-	var searchResult *insta.SearchResult // SearchUser returns a pointer to a SearchResult struct
 	// Make request to Instagram API
 	searchResult, err := client.SearchUser(queryString, map[string]string{})
 	if err != nil {

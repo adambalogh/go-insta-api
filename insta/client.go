@@ -60,7 +60,7 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 }
 
 // sendRequest sends a HTTP GET request to the requested URL
-func (i *InstaClient) sendGetRequest(url string) (*http.Response, error) {
+func (i *InstaClient) SendGetRequest(url string) (*http.Response, error) {
 	// Send request
 	resp, err := http.Get(url)
 	if err != nil {

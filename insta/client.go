@@ -13,41 +13,11 @@ const (
 	instagramApiBaseURL = "https://api.instagram.com/v1"
 )
 
-// HTTPRequester sends HTTP requests
-type HTTPRequester interface {
-	SendGetRequest(url string) (*http.Response, error)
-	SendPostRequest(url string, formValues url.Values) (*http.Response, error)
-}
-
-// SimpleHTTPRequester sends HTTP requests using the built-in library
-type SimpleHTTPRequester struct {
-}
-
-// SendRequest sends a HTTP GET request to the requested URL
-func (s SimpleHTTPRequester) SendGetRequest(url string) (*http.Response, error) {
-	// Send request
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-// SendPostRequest sends a HTTP POST request with the given form values to the requested URL
-func (s SimpleHTTPRequester) SendPostRequest(url string, formValues url.Values) (*http.Response, error) {
-	client := &http.Client{}
-	resp, err := client.PostForm(url, formValues)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
 // InstaCLient gives access to the Instagram API client
 // It normally it requires an access token, but some parts of the API can be
 // accessed by just using the client ID, please check the Instagram API doc.
 type InstaClient struct {
-	HTTPRequester
+	HTTPClient  *http.Client
 	ClientID    string
 	AccessToken string
 }
@@ -55,7 +25,7 @@ type InstaClient struct {
 // NewInstaClient returns an initialized InstaClient, with a basic HTTPRequester
 func NewInstaClient(accessToken string) *InstaClient {
 	client := new(InstaClient)
-	client.HTTPRequester = SimpleHTTPRequester{}
+	client.HTTPClient = &http.Client{}
 	client.AccessToken = accessToken
 	return client
 }
@@ -82,7 +52,7 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 	u.RawQuery = urlParameters.Encode()
 
 	// Send request
-	resp, err := i.SendGetRequest(u.String())
+	resp, err := i.HTTPClient.Get(u.String())
 	if err != nil {
 		return err
 	}

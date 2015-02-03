@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 )
 
@@ -17,7 +18,7 @@ const (
 // This struct is solely used to retrieve access
 // token to authenticate InstaClient class
 type InstaLogin struct {
-	HTTPRequester
+	HTTPClient   *http.Client
 	ClientID     string
 	ClientSecret string
 	RedirectURL  string
@@ -26,7 +27,7 @@ type InstaLogin struct {
 // NewInstaLogin returns an initialized InstaLogin, with a SimpleHTTPRequester
 func NewInstaLogin(clientID, clientSecret, redirectURL string) *InstaLogin {
 	login := new(InstaLogin)
-	login.HTTPRequester = SimpleHTTPRequester{}
+	login.HTTPClient = &http.Client{}
 	login.ClientID = clientID
 	login.ClientSecret = clientSecret
 	login.RedirectURL = redirectURL
@@ -49,7 +50,7 @@ func (i *InstaLogin) ExchangeCodeForAccessToken(code string) (string, error) {
 	params.Add("grant_type", "authorization_code")
 	params.Add("redirect_uri", i.RedirectURL)
 	// Send HTTP POST request
-	resp, err := i.SendPostRequest(accessTokenURL, params)
+	resp, err := i.HTTPClient.PostForm(accessTokenURL, params)
 	if err != nil {
 		return "", err
 	}

@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	clientID     = ""
-	clientSecret = ""
-	redirectURL  = ""
+	clientID     = "2c28931a275a410aa440fa062c1a6a9d"
+	clientSecret = "c9b74f19b20d4bed80773b9f7e06696d"
+	redirectURL  = "http://localhost:8080/oauth-complete"
 )
 
 // authApi is used for logging in the user, authenticating

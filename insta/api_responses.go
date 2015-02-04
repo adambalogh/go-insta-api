@@ -93,11 +93,12 @@ type UserFeed struct {
 
 // User post including image, likes, comments etc.
 type Post struct {
-	ID       string        `json:"id"`
-	Images   PostImage     `json:"images"`
-	Tags     []string      `json:"tags"`
-	Caption  ImageCaption  `json:"caption"`
-	Location ImageLocation `json:"location"`
+	ID          string        `json:"id"`
+	Images      PostImage     `json:"images"`
+	Tags        []string      `json:"tags"`
+	Caption     ImageCaption  `json:"caption"`
+	Location    ImageLocation `json:"location"`
+	CreatedTime string        `json:"created_time"`
 }
 
 // A single image with multiple resolutions

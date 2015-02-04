@@ -3,6 +3,7 @@ package insta
 import (
 	"errors"
 	"fmt"
+	"sort"
 )
 
 // GetUserProfile returns the full user profile of the requested user ID.
@@ -87,6 +88,47 @@ func (i *InstaClient) GetPostsWithMaxID(userID string, maxID string) (*UserFeed,
 		"max_id": maxID,
 	})
 }
+
+// getPostsAsync returns the user's Posts through a channel
+func (i *InstaClient) getPostsAsync(userID string, options map[string]string,
+	postsChannel chan []Post, errorChannel chan error) {
+	feed, err := i.GetPosts(userID, options)
+	if err != nil {
+		errorChannel <- err
+		return
+	}
+	postsChannel <- feed.Posts
+}
+
+// GetPostsFromUsers returns the merged feed of the requested users
+func (i *InstaClient) GetPostsFromUsers(userIDs []string, options map[string]string) ([]Post, error) {
+	var posts []Post
+	var e error
+	postsChannel := make(chan []Post)
+	errorChannel := make(chan error)
+	for _, userID := range userIDs {
+		go i.getPostsAsync(userID, options, postsChannel, errorChannel)
+	}
+	for i := 0; i < len(userIDs); i++ {
+		select {
+		case userPosts := <-postsChannel:
+			posts = append(posts, userPosts...)
+		case err := <-errorChannel:
+			fmt.Println(err)
+		}
+	}
+	// Sort posts by created time
+	sort.Sort(ByCreatedTime(posts))
+
+	return posts, e
+}
+
+// Sorting Interface for UserFeed.Post
+type ByCreatedTime []Post
+
+func (c ByCreatedTime) Len() int           { return len(c) }
+func (c ByCreatedTime) Swap(i, j int)      { c[i], c[j] = c[j], c[i] }
+func (c ByCreatedTime) Less(i, j int) bool { return c[i].CreatedTime > c[j].CreatedTime }
 
 // GetLikedPosts returns the currently logged in user's liked posts
 func (i *InstaClient) GetLikedPosts(options map[string]string) (*UserFeed, error) {

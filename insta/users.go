@@ -91,7 +91,7 @@ func (i *InstaClient) GetPostsWithMaxID(userID string, maxID string) (*UserFeed,
 
 // GetPostsFromUsers returns the merged feed of the requested users
 // 
-// The options received will be used for each of the user feed requests,
+// The options received will be used for each individual user feed request,
 // e.g. if options['count'] = 5, then it will return 5 posts from each of the
 // requested users
 func (i *InstaClient) GetPostsFromUsers(userIDs []string, options map[string]string) ([]Post, error) {

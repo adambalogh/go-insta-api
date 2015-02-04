@@ -106,15 +106,17 @@ func (i *InstaClient) GetPostsFromUsers(userIDs []string, options map[string]str
 	var e error
 	postsChannel := make(chan []Post)
 	errorChannel := make(chan error)
+	// Send requests for posts
 	for _, userID := range userIDs {
 		go i.getPostsAsync(userID, options, postsChannel, errorChannel)
 	}
+	// Receive request results
 	for i := 0; i < len(userIDs); i++ {
 		select {
 		case userPosts := <-postsChannel:
 			posts = append(posts, userPosts...)
 		case err := <-errorChannel:
-			fmt.Println(err)
+			e = err
 		}
 	}
 	// Sort posts by created time

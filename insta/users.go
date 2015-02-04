@@ -89,17 +89,6 @@ func (i *InstaClient) GetPostsWithMaxID(userID string, maxID string) (*UserFeed,
 	})
 }
 
-// getPostsAsync returns the user's Posts through a channel
-func (i *InstaClient) getPostsAsync(userID string, options map[string]string,
-	postsChannel chan []Post, errorChannel chan error) {
-	feed, err := i.GetPosts(userID, options)
-	if err != nil {
-		errorChannel <- err
-		return
-	}
-	postsChannel <- feed.Posts
-}
-
 // GetPostsFromUsers returns the merged feed of the requested users
 func (i *InstaClient) GetPostsFromUsers(userIDs []string, options map[string]string) ([]Post, error) {
 	var posts []Post
@@ -108,7 +97,14 @@ func (i *InstaClient) GetPostsFromUsers(userIDs []string, options map[string]str
 	errorChannel := make(chan error)
 	// Send requests for posts
 	for _, userID := range userIDs {
-		go i.getPostsAsync(userID, options, postsChannel, errorChannel)
+		go func(userID string, options map[string]string, postsChannel chan []Post, errorChannel chan error) {
+			feed, err := i.GetPosts(userID, options)
+			if err != nil {
+				errorChannel <- err
+				return
+			}
+			postsChannel <- feed.Posts
+		}(userID, options, postsChannel, errorChannel)
 	}
 	// Receive request results
 	for i := 0; i < len(userIDs); i++ {

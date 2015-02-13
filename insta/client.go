@@ -22,7 +22,7 @@ type InstaClient struct {
 	AccessToken string
 }
 
-// NewInstaClient returns an initialized InstaClient, with a basic HTTPRequester
+// NewInstaClient returns an initialized InstaClient, with a built-in HTTPClient
 func NewInstaClient(accessToken string) *InstaClient {
 	client := new(InstaClient)
 	client.HTTPClient = &http.Client{}

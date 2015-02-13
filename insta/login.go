@@ -24,7 +24,7 @@ type InstaLogin struct {
 	RedirectURL  string
 }
 
-// NewInstaLogin returns an initialized InstaLogin, with a SimpleHTTPRequester
+// NewInstaLogin returns an initialized InstaLogin
 func NewInstaLogin(clientID, clientSecret, redirectURL string) *InstaLogin {
 	login := new(InstaLogin)
 	login.HTTPClient = &http.Client{}

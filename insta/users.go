@@ -38,7 +38,7 @@ func (i *InstaClient) SearchUser(queryString string, options map[string]string) 
 
 	options["q"] = queryString // add query string to options map
 	searchResult := new(SearchResult)
-	err := i.getRequest("http://localhost:8000", options, searchResult)
+	err := i.getRequest(base+"/users/search", options, searchResult)
 	if err != nil {
 		return nil, err
 	}

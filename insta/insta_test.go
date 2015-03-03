@@ -3,6 +3,7 @@ package insta
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -17,6 +18,10 @@ type TestUser struct {
 	Posts int    `json:"posts"`
 }
 
+var (
+	emptyUser = &TestUser{}
+)
+
 func TestGetRequestParameters(t *testing.T) {
 	options := map[string]string{
 		"name":  "me",
@@ -28,19 +33,19 @@ func TestGetRequestParameters(t *testing.T) {
 		// Test GET parameters
 		for k, v := range options {
 			if sent := r.FormValue(k); sent != v {
-				t.Errorf("Expected parameter for '%s': %s, got %s", k, v, sent)
+				t.Errorf("Expected parameter for '%s' : %s, got %s", k, v, sent)
 			}
 		}
 	}))
 	defer server.Close()
 
 	c := NewClient(&http.Client{})
-	c.getRequest(server.URL, options, nil)
+	c.getRequest(server.URL, options, emptyUser)
 }
 
 func TestGetRequestInvalidURL(t *testing.T) {
 	c := NewClient(&http.Client{})
-	err := c.getRequest("kttp://abcd", make(map[string]string), nil)
+	err := c.getRequest("kttp://abcd", make(map[string]string), emptyUser)
 
 	if err == nil {
 		t.Errorf("Expected an error")
@@ -55,11 +60,12 @@ func TestGetRequestBadStatusCode(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Return 404
 		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, "{}")
 	}))
 	defer server.Close()
 
 	c := NewClient(&http.Client{})
-	err := c.getRequest(server.URL, make(map[string]string), nil)
+	err := c.getRequest(server.URL, make(map[string]string), emptyUser)
 
 	if err == nil {
 		t.Errorf("Expected an error")

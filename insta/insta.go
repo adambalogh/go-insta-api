@@ -17,34 +17,28 @@ const (
 // It normally it requires an access token, but some parts of the API can be
 // accessed by just using the client ID, please check the Instagram API doc.
 type InstaClient struct {
-	HTTPClient  *http.Client
-	ClientID    string
-	AccessToken string
+	client   *http.Client
+	ClientID string
 }
 
 // NewInstaClient returns an initialized InstaClient, with a built-in HTTPClient
-func NewInstaClient(accessToken string) *InstaClient {
-	client := new(InstaClient)
-	client.HTTPClient = &http.Client{}
-	client.AccessToken = accessToken
-	return client
+func NewClient(client *http.Client) *InstaClient {
+	c := new(InstaClient)
+	c.client = client
+	return c
 }
 
 // getRequest dispatches a GET request to the Instagram API and unmarshals the received data.
-func (i *InstaClient) getRequest(endpointURL string, options map[string]string, resultType interface{}) error {
+func (i *InstaClient) getRequest(endpoint string, options map[string]string, resultType interface{}) error {
 	// Convert the options into URL query string
 	urlParameters := url.Values{}
 	for key, value := range options {
 		urlParameters.Add(key, value)
 	}
-	// TODO not all endpoints require access tokens
-	urlParameters.Add("access_token", i.AccessToken)
 
 	// Convert full request url into URL struct, so we can add the query string.
-	completeURL := instagramApiBaseURL + endpointURL
-	u, err := url.Parse(completeURL)
+	u, err := url.Parse(endpoint)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -52,7 +46,7 @@ func (i *InstaClient) getRequest(endpointURL string, options map[string]string, 
 	u.RawQuery = urlParameters.Encode()
 
 	// Send request
-	resp, err := i.HTTPClient.Get(u.String())
+	resp, err := i.client.Get(u.String())
 	if err != nil {
 		return err
 	}
@@ -79,14 +73,14 @@ func (a ApiError) Error() string {
 }
 
 // newApiError returns the error sent by the Instagram API.
-func newApiError(r *http.Response) error {
+func newApiError(r *http.Response) ApiError {
 	var meta ApiResponse
 	decodeBody(r.Body, &meta)
 
 	return ApiError(meta.Meta)
 }
 
-// decodeBody decoodes a HTTP response's body into the requested interface type
+// decodeBody decoodes a HTTP response's body into the requested type
 func decodeBody(body io.Reader, resultType interface{}) error {
 	decoder := json.NewDecoder(body)
 	err := decoder.Decode(resultType)

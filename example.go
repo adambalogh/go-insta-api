@@ -10,14 +10,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-const (
-	clientID         = "2c28931a275a410aa440fa062c1a6a9d"
-	clientSecret     = "c9b74f19b20d4bed80773b9f7e06696d"
-	redirectURL      = "http://localhost:8080/oauth-complete"
-	authorizationURL = "https://api.instagram.com/oauth/authorize"
-	accessTokenURL   = "https://api.instagram.com/oauth/access_token"
-)
-
 var (
 	auth = &oauth2.Config{
 		ClientID:     clientID,

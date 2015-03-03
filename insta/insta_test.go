@@ -20,6 +20,7 @@ type TestUser struct {
 
 var (
 	emptyUser = &TestUser{}
+	token     = "1234"
 )
 
 func TestGetRequestParameters(t *testing.T) {
@@ -36,15 +37,19 @@ func TestGetRequestParameters(t *testing.T) {
 				t.Errorf("Expected parameter for '%s' : %s, got %s", k, v, sent)
 			}
 		}
+		// Test Access Token
+		if sent := r.FormValue("access_token"); sent != token {
+			t.Errorf("Expected access token '%s', got '%s'", token, sent)
+		}
 	}))
 	defer server.Close()
 
-	c := NewClient(&http.Client{})
+	c := NewClient(&http.Client{}, token)
 	c.getRequest(server.URL, options, emptyUser)
 }
 
 func TestGetRequestInvalidURL(t *testing.T) {
-	c := NewClient(&http.Client{})
+	c := NewClient(&http.Client{}, token)
 	err := c.getRequest("kttp://abcd", make(map[string]string), emptyUser)
 
 	if err == nil {
@@ -64,7 +69,7 @@ func TestGetRequestBadStatusCode(t *testing.T) {
 	}))
 	defer server.Close()
 
-	c := NewClient(&http.Client{})
+	c := NewClient(&http.Client{}, token)
 	err := c.getRequest(server.URL, make(map[string]string), emptyUser)
 
 	if err == nil {

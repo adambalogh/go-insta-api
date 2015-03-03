@@ -24,8 +24,13 @@ type InstaLogin struct {
 	Context      *oauth2.Context
 }
 
+<<<<<<< HEAD
 // NewInstaLogin returns an initialized InstaLogin, with a SimpleHTTPRequester
 func New(clientID, clientSecret, redirectURL string) *InstaLogin {
+=======
+// NewInstaLogin returns an initialized InstaLogin
+func NewInstaLogin(clientID, clientSecret, redirectURL string) *InstaLogin {
+>>>>>>> 1141a451dac40ff498ca23661b9928a528fb9aa4
 	login := new(InstaLogin)
 	login.HTTPClient = &http.Client{}
 	login.ClientID = clientID

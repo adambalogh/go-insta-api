@@ -10,7 +10,7 @@ import (
 
 const (
 	// Base Instagram API URL
-	instagramApiBaseURL = "https://api.instagram.com/v1"
+	base = "https://api.instagram.com/v1"
 )
 
 // InstaCLient gives access to the Instagram API client

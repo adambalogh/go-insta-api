@@ -12,7 +12,7 @@ func (i *InstaClient) GetFollows(userID string) ([]UserWithFullName, error) {
 	}
 
 	followsResponse := new(FollowsResult)
-	err := i.getRequest(fmt.Sprintf("/users/%s/follows", userID), map[string]string{}, followsResponse)
+	err := i.getRequest(base+fmt.Sprintf("/users/%s/follows", userID), map[string]string{}, followsResponse)
 	if err != nil {
 		return nil, err
 	}

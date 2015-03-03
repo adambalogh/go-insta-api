@@ -13,7 +13,7 @@ func (i *InstaClient) GetUserProfile(userID string) (*UserWithFullDetails, error
 	}
 
 	userProfileResult := new(UserProfileResult)
-	err := i.getRequest(fmt.Sprintf("/users/%s", userID), map[string]string{}, userProfileResult)
+	err := i.getRequest(base+fmt.Sprintf("/users/%s", userID), map[string]string{}, userProfileResult)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +23,7 @@ func (i *InstaClient) GetUserProfile(userID string) (*UserWithFullDetails, error
 // GetSelfFeed returns the currently authenticated user's feed.
 func (i *InstaClient) GetSelfFeed() (*UserFeed, error) {
 	selfFeed := new(UserFeed)
-	err := i.getRequest("/users/self/feed", map[string]string{}, selfFeed)
+	err := i.getRequest(base+"/users/self/feed", map[string]string{}, selfFeed)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (i *InstaClient) SearchUser(queryString string, options map[string]string) 
 
 	options["q"] = queryString // add query string to options map
 	searchResult := new(SearchResult)
-	err := i.getRequest("/users/search", options, searchResult)
+	err := i.getRequest("http://localhost:8000", options, searchResult)
 	if err != nil {
 		return nil, err
 	}
@@ -59,9 +59,10 @@ func (i *InstaClient) GetUserID(username string) (string, error) {
 }
 
 // GetPosts returns the requested user's posts
-// It accepts the following arguments:
 //
+// It accepts the following arguments:
 // - max_id: the retrieved posts will have an ID smaller than this
+// - count: the number of most recent posts to return from the user's feed
 //
 func (i *InstaClient) GetPosts(userID string, options map[string]string) (*UserFeed, error) {
 	if len(userID) == 0 {
@@ -69,7 +70,7 @@ func (i *InstaClient) GetPosts(userID string, options map[string]string) (*UserF
 	}
 
 	feed := new(UserFeed)
-	err := i.getRequest(fmt.Sprintf("/users/%s/media/recent", userID), options, feed)
+	err := i.getRequest(fmt.Sprintf(base+"/users/%s/media/recent", userID), options, feed)
 	if err != nil {
 		return nil, err
 	}
@@ -89,10 +90,10 @@ func (i *InstaClient) GetPostsWithMaxID(userID string, maxID string) (*UserFeed,
 	})
 }
 
-// GetPostsFromUsers returns the merged feed of the requested users
-// 
-// The options received will be used for each individual user feed request,
-// e.g. if options['count'] = 5, then it will return 5 posts from each of the
+// GetPostsFromUsers returns the merged feed of the requested users.
+//
+// The given options will be used for each individual user feed request,
+// e.g. if options["count"] = 5, then it will return 5 posts from each of the
 // requested users
 func (i *InstaClient) GetPostsFromUsers(userIDs []string, options map[string]string) ([]Post, error) {
 	var posts []Post
@@ -135,7 +136,7 @@ func (c ByCreatedTime) Less(i, j int) bool { return c[i].CreatedTime > c[j].Crea
 // GetLikedPosts returns the currently logged in user's liked posts
 func (i *InstaClient) GetLikedPosts(options map[string]string) (*UserFeed, error) {
 	feed := new(UserFeed)
-	err := i.getRequest("/users/self/media/liked", options, feed)
+	err := i.getRequest(base+"/users/self/media/liked", options, feed)
 	if err != nil {
 		return nil, err
 	}

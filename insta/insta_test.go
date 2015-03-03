@@ -9,19 +9,20 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+)
 
-	//"golang.org/x/oauth2"
+var (
+	emptyUser = &TestUser{}
+)
+
+const (
+	token = "1234"
 )
 
 type TestUser struct {
 	Name  string `json:"name"`
 	Posts int    `json:"posts"`
 }
-
-var (
-	emptyUser = &TestUser{}
-	token     = "1234"
-)
 
 func TestGetRequestParameters(t *testing.T) {
 	options := map[string]string{

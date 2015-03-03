@@ -52,7 +52,7 @@ func (i *InstaClient) getRequest(endpoint string, options map[string]string, res
 	}
 	// Check response code
 	if resp.StatusCode != 200 {
-		return newApiError(resp)
+		return newAPIError(resp)
 	}
 
 	// Decode JSON response into given struct
@@ -64,20 +64,20 @@ func (i *InstaClient) getRequest(endpoint string, options map[string]string, res
 	return nil
 }
 
-// ApiError represents an error originating from the Instagram API.
-type ApiError ResponseMeta
+// APIError represents an error originating from the Instagram API.
+type APIError ResponseMeta
 
 // Error returns the string representation of the error.
-func (a ApiError) Error() string {
+func (a APIError) Error() string {
 	return fmt.Sprintf("Instagram API error: Code: %d, Type: %s, Message: %s", a.Code, a.ErrorType, a.ErrorMessage)
 }
 
-// newApiError returns the error sent by the Instagram API.
-func newApiError(r *http.Response) ApiError {
+// newAPIError returns the error sent by the Instagram API.
+func newAPIError(r *http.Response) APIError {
 	var meta ApiResponse
 	decodeBody(r.Body, &meta)
 
-	return ApiError(meta.Meta)
+	return APIError(meta.Meta)
 }
 
 // decodeBody decoodes a HTTP response's body into the requested type

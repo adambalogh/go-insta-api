@@ -43,10 +43,29 @@ func TestGetRequestInvalidURL(t *testing.T) {
 	err := c.getRequest("kttp://abcd", make(map[string]string), nil)
 
 	if err == nil {
-		t.Errorf("Expected error, got nil")
+		t.Errorf("Expected an error")
 	}
 	if _, ok := err.(*url.Error); !ok {
 		t.Errorf("Expected an URL error, got %#v", err)
+	}
+}
+
+func TestGetRequestBadStatusCode(t *testing.T) {
+	// Dummy Server
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Return 404
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer server.Close()
+
+	c := NewClient(&http.Client{})
+	err := c.getRequest(server.URL, make(map[string]string), nil)
+
+	if err == nil {
+		t.Errorf("Expected an error")
+	}
+	if _, ok := err.(APIError); !ok {
+		t.Errorf("Expected an APIError, got %#v", err)
 	}
 }
 
@@ -82,11 +101,11 @@ func TestAPIError(t *testing.T) {
 	resp := http.Response{}
 	resp.Body = ioutil.NopCloser(reader)
 
-	apiError := newApiError(&resp)
+	APIError := newAPIError(&resp)
 
-	if !(meta.Code == apiError.Code &&
-		meta.ErrorType == apiError.ErrorType &&
-		meta.ErrorMessage == apiError.ErrorMessage) {
-		t.Errorf("Expected %+v, got %+v", meta, apiError)
+	if !(meta.Code == APIError.Code &&
+		meta.ErrorType == APIError.ErrorType &&
+		meta.ErrorMessage == APIError.ErrorMessage) {
+		t.Errorf("Expected %+v, got %+v", meta, APIError)
 	}
 }

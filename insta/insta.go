@@ -13,16 +13,15 @@ const (
 	base = "https://api.instagram.com/v1"
 )
 
-// InstaCLient gives access to the Instagram API client
-// It normally it requires an access token, but some parts of the API can be
-// accessed by just using the client ID, please check the Instagram API doc.
+// InstaCLient gives access to the Instagram API
 type InstaClient struct {
 	AccessToken string
 	Client      *http.Client
 	ClientID    string
 }
 
-// NewInstaClient returns an initialized InstaClient, with a built-in HTTPClient
+// NewInstaClient returns an initialized InstaClient, that uses the
+// given access token and http.Client to make requests
 func NewClient(client *http.Client, accessToken string) *InstaClient {
 	c := new(InstaClient)
 	c.AccessToken = accessToken
@@ -30,7 +29,7 @@ func NewClient(client *http.Client, accessToken string) *InstaClient {
 	return c
 }
 
-// getRequest dispatches a GET request to the Instagram API and unmarshals the received data.
+// getRequest sends a GET request to the Instagram API and unmarshals the received data.
 func (i *InstaClient) getRequest(endpoint string, options map[string]string, resultType interface{}) error {
 	// Convert the options into URL query string
 	urlParameters := url.Values{}

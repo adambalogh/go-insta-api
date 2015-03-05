@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-// GetUserProfile returns the full user profile of the requested user ID.
+// GetUserProfile returns the user profile with the given user ID.
 func (i *InstaClient) GetUserProfile(userID string) (*UserWithFullDetails, error) {
 	if len(userID) == 0 {
 		return nil, errors.New("User ID cannot be empty")
@@ -20,7 +20,7 @@ func (i *InstaClient) GetUserProfile(userID string) (*UserWithFullDetails, error
 	return &userProfileResult.UserProfile, err
 }
 
-// GetSelfFeed returns the currently authenticated user's feed.
+// GetSelfFeed returns the current user's feed.
 func (i *InstaClient) GetSelfFeed() (*UserFeed, error) {
 	selfFeed := new(UserFeed)
 	err := i.getRequest(base+"/users/self/feed", map[string]string{}, selfFeed)
@@ -58,12 +58,8 @@ func (i *InstaClient) GetUserID(username string) (string, error) {
 	return searchResult.Users[0].ID, nil
 }
 
-// GetPosts returns the requested user's posts
-//
-// It accepts the following arguments:
-// - max_id: the retrieved posts will have an ID smaller than this
-// - count: the number of most recent posts to return from the user's feed
-//
+// GetPosts returns the requested user's posts.
+// Any arguments for the API call should be in the options map.
 func (i *InstaClient) GetPosts(userID string, options map[string]string) (*UserFeed, error) {
 	if len(userID) == 0 {
 		return nil, errors.New("User ID cannot be empty")

@@ -1,10 +1,5 @@
 package insta
 
-// Instagram access token response
-type AccessTokenResponse struct {
-	AccessToken string `json:"access_token"`
-}
-
 // Base struct for every Instagram API response
 type ApiResponse struct {
 	Meta ResponseMeta `json:"meta"`
